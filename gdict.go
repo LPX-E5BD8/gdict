@@ -1,0 +1,5 @@
+package gdict
+
+func main() {
+
+}
