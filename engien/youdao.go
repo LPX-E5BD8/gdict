@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 
-	"github.com/kr/pretty"
 	"github.com/liipx/gdict/common"
 )
 
@@ -113,7 +113,7 @@ func (yd Youdao) getUrlNewVer() string {
 }
 
 // 查询
-func (yd Youdao) Query() string {
+func (yd Youdao) Query() {
 	urlStr := yd.getUrlOldVer()
 	resp, err := http.Get(urlStr)
 
@@ -125,7 +125,8 @@ func (yd Youdao) Query() string {
 	result, _ := ioutil.ReadAll(resp.Body)
 	rs := new(YoudaoResult)
 	json.Unmarshal(result, rs)
-	return rs.Format()
+
+	rs.Format()
 }
 
 // 结果集结构体
@@ -149,7 +150,52 @@ type web struct {
 	Value []string `json:"value"`
 }
 
-func (yr *YoudaoResult) Format() string {
-	pretty.Println(yr)
-	return ""
+func (yr *YoudaoResult) Format() {
+	context := yr.Query + "\n\n"
+	// phonetic
+	context += fmt.Sprintf("%s\n\n", yr.phoneticFormat())
+
+	// explains
+	context += fmt.Sprintf("%s\n%s\n", "Exps:", yr.explainsFormat())
+
+	// translation
+	context += fmt.Sprintf("%s\n%s\n\n", "翻译:", yr.transFormat())
+
+	// web
+	context += fmt.Sprintf("%s\n%s\n\n", "网络:", yr.webFormat())
+
+	fmt.Println(context)
+}
+
+func (yr *YoudaoResult) explainsFormat() string {
+	content := ""
+	for _, exp := range yr.Basic.Explains {
+		exp := strings.Split(exp, ". ")
+		content += strings.Join(exp, ".\t") + "\n"
+	}
+	return content
+}
+func (yr *YoudaoResult) phoneticFormat() string {
+	content := ""
+	if yr.Basic.UkPhonetic == "" && yr.Basic.UsPhonetic == "" {
+		content += "拼音: " + yr.Basic.Phonetic
+	} else {
+		content += "英: " + yr.Basic.UkPhonetic + "    "
+		content += "美: " + yr.Basic.UsPhonetic
+	}
+	return content
+}
+func (yr *YoudaoResult) transFormat() string {
+	content := ""
+	content += fmt.Sprintf("%s", yr.Translation)
+
+	return content
+}
+func (yr *YoudaoResult) webFormat() string {
+	content := ""
+	for _, v := range yr.Web {
+		content += fmt.Sprintf("%s: %s\n", v.Key, v.Value)
+	}
+
+	return content
 }
