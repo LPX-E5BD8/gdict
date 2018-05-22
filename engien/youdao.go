@@ -150,51 +150,85 @@ type web struct {
 	Value []string `json:"value"`
 }
 
+// main format
 func (yr *YoudaoResult) Format() {
-	context := yr.Query + "\n\n"
+	context := fmt.Sprintf("\n%s %s\n\n", common.ColorTitle("查询:"), common.ColorNormal(yr.Query))
+
 	// phonetic
-	context += fmt.Sprintf("%s\n\n", yr.phoneticFormat())
+	if pho := yr.phoneticFormat(); strings.TrimSpace(pho) != "" {
+		context += fmt.Sprintf("%s\n\n", pho)
+	}
 
 	// explains
-	context += fmt.Sprintf("%s\n%s\n", "Exps:", yr.explainsFormat())
+	if exp := yr.explainsFormat(); strings.TrimSpace(exp) != "" {
+		context += fmt.Sprintf("%s\n\n%s\n", common.ColorTitle("Exps:"), exp)
+	}
 
 	// translation
-	context += fmt.Sprintf("%s\n%s\n\n", "翻译:", yr.transFormat())
+	if tran := yr.transFormat(); strings.TrimSpace(tran) != "" {
+		context += fmt.Sprintf("%s\n\n%s\n\n", common.ColorTitle("翻译:"), tran)
+	}
 
 	// web
-	context += fmt.Sprintf("%s\n%s\n\n", "网络:", yr.webFormat())
+	if web := yr.webFormat(); strings.TrimSpace(web) != "" {
+		context += fmt.Sprintf("%s\n\n%s\n\n", common.ColorTitle("网络释义:"), web)
+	}
 
 	fmt.Println(context)
 }
 
+// format explain
 func (yr *YoudaoResult) explainsFormat() string {
 	content := ""
+	number := 1
 	for _, exp := range yr.Basic.Explains {
 		exp := strings.Split(exp, ". ")
-		content += strings.Join(exp, ".\t") + "\n"
+		if yr.Basic.UkPhonetic == "" && yr.Basic.UsPhonetic == "" {
+			numStr := fmt.Sprintf("% 2d", number)
+			content += common.ColorAlert(numStr) + "." + strings.Join(exp, ".\t") + "\n\n"
+		} else {
+			for i, v := range exp {
+				if (i+1)%2 == 0 {
+					content += v + "\n"
+				} else {
+					content += fmt.Sprintf("%5s.  ", v)
+				}
+			}
+		}
+		number++
 	}
 	return content
 }
+
+// format phonetic
 func (yr *YoudaoResult) phoneticFormat() string {
 	content := ""
-	if yr.Basic.UkPhonetic == "" && yr.Basic.UsPhonetic == "" {
-		content += "拼音: " + yr.Basic.Phonetic
-	} else {
-		content += "英: " + yr.Basic.UkPhonetic + "    "
-		content += "美: " + yr.Basic.UsPhonetic
+	if yr.Basic.UkPhonetic == "" && yr.Basic.UsPhonetic == "" && yr.Basic.Phonetic != "" {
+		content += common.ColorTitle("拼音: ") + yr.Basic.Phonetic
+	} else if yr.Basic.UkPhonetic != "" || yr.Basic.UsPhonetic != "" {
+		content += common.ColorTitle("英: ") + common.ColorAlert(yr.Basic.UkPhonetic) + strings.Repeat(" ", 4)
+		content += common.ColorTitle("美: ") + common.ColorAlert(yr.Basic.UsPhonetic)
 	}
 	return content
 }
+
+// format translation
 func (yr *YoudaoResult) transFormat() string {
 	content := ""
-	content += fmt.Sprintf("%s", yr.Translation)
+	content += fmt.Sprintf("  %s", strings.Join(yr.Translation, "\n  "))
 
 	return content
 }
+
+// format web
 func (yr *YoudaoResult) webFormat() string {
 	content := ""
+	number := 1
 	for _, v := range yr.Web {
-		content += fmt.Sprintf("%s: %s\n", v.Key, v.Value)
+		numStr := fmt.Sprintf("% 2d", number)
+		content += fmt.Sprintf("  %s.%s:\n    %s\n\n",
+			common.ColorAlert(numStr), common.ColorAlert(v.Key), strings.Join(v.Value, ", "))
+		number++
 	}
 
 	return content
