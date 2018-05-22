@@ -81,15 +81,17 @@ type Youdao struct {
 	KeyFrom string
 	Key     string
 	query   string
+	style   string
 }
 
 // 生成一个Youdao词典引擎
-func NewYoudao(query string) *Youdao {
+func NewYoudao(query string, style string) *Youdao {
 	i := common.RandInt(0, len(YoudaoKeys)-1)
 	return &Youdao{
 		KeyFrom: YoudaoKeys[i].KeyFrom,
 		Key:     YoudaoKeys[i].Key,
 		query:   query,
+		style:   style,
 	}
 }
 
