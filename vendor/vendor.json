@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "VgSEKS/5VhgpkZfV4CP6tHLUIoU=",
+			"path": "github.com/aybabtme/rgbterm",
+			"revision": "cc83f3b3ce5911279513a46d6d3316d67bedaa54",
+			"revisionTime": "2017-09-06T15:20:45Z"
+		}
+	],
+	"rootPath": "github.com/liipx/gdict"
+}
