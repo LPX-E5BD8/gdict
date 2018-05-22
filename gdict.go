@@ -21,6 +21,7 @@ func main() {
 
 	if *query == "" {
 		fmt.Println("Useage: gdict -q 'lips'")
+		os.Exit(1)
 	}
 
 	// TODO more engines supported
