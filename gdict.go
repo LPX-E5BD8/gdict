@@ -25,10 +25,10 @@ func main() {
 	for _, arg := range os.Args[1:] {
 		switch strings.ToLower(arg) {
 		case "-h", "--help":
-			fmt.Printf("Options：\n\t配色类: -dark, -light" +
-				"\n\t语音朗读(限MacOS): -s, --say" +
-				"\n\t翻译引擎: -youdao" +
-				"\n\t帮助: -h, --help")
+			fmt.Printf("Options:\n%7s: -dark, -light"+
+				"\n%7s: -s, --say  (MacOS only)"+
+				"\n%7s: -youdao"+
+				"\n%7s: -h, --help \n", "Style", "Read", "Engine", "Help")
 			return
 		case "-black", "-light":
 			startSetting = true
