@@ -25,10 +25,11 @@ func main() {
 	for _, arg := range os.Args[1:] {
 		switch strings.ToLower(arg) {
 		case "-h", "--help":
-			fmt.Sprintf("Options：\n\t配色类: -dark, -light" +
+			fmt.Printf("Options：\n\t配色类: -dark, -light" +
 				"\n\t语音朗读(限MacOS): -s, --say" +
 				"\n\t翻译引擎: -youdao" +
 				"\n\t帮助: -h, --help")
+			return
 		case "-black", "-light":
 			startSetting = true
 			style = strings.Replace(arg, "-", "", -1)
