@@ -11,7 +11,7 @@ go get -u github.com/liipx/gdict
 #### 使用
 ##### 英译汉
 ```bash
-➜  ~ gdict -q peace
+➜  ~ gdict peace
 
 查询: peace
 
@@ -40,7 +40,7 @@ Exps:
 ```
 ##### 汉译英
 ```bash
-➜  ~ gdict -q 和平
+➜  ~ gdict 和平
 
 查询: 和平
 
@@ -67,11 +67,23 @@ Exps:
     Greenpeace, Greenpeace East Asia, Greenpeace International
 ```
 ### 说明
+```text
+$ gdict word [options ...]
+```
+Options：
+```text
+Options:
+  Style: -dark, -light              // 配色方案
+   Read: -s, --say  (MacOS only)    // 魅惑发音
+ Engine: -youdao                    // 词典引擎，目前仅支持Youdao
+   Help: -h, --help                 // 查看帮助
+```
+
 > 这是一个为了自己做的词典，因为懒得用鼠标，python或js实现的词典依赖又太多。<br>
 > 有需求可以给我留issue，我会尽量支持（如果有人用的话雾）
 
 1. 使用有道云老版本API，Key来自GITHUB，侵删。
-2. MacOS支持鬼魅朗读，可以感受一下: `gdict -q xxx -s` ... 其实就是调用的say
+2. MacOS支持鬼魅朗读，可以感受一下: `gdict xxx -s` ... 其实就是调用的say
 3. dark友好配色方案【light后续支持】
 
 ### TODO
