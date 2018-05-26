@@ -84,7 +84,6 @@ Options:
 
 1. 使用有道云老版本API，Key来自GITHUB，侵删。
 2. MacOS支持鬼魅朗读，可以感受一下: `gdict xxx -s` ... 其实就是调用的say
-3. dark友好配色方案【light后续支持】
 
 ### TODO
 1. 多词典引擎支持【必应、金山词霸等】
