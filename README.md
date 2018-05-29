@@ -75,7 +75,7 @@ Options：
 Options:
   Style: -dark, -light              // 配色方案
    Read: -s, --say  (MacOS only)    // 魅惑发音
- Engine: -youdao                    // 词典引擎，目前仅支持Youdao
+ Engine: -e <engine name>                    // 词典引擎，目前仅支持Youdao(默认为有道youdao)
    Help: -h, --help                 // 查看帮助
 ```
 
