@@ -24,10 +24,37 @@ func main() {
 	// --help and -h
 	help := flag.Bool("help", false, "输出帮助信息")
 	shortHelp := flag.Bool("h", false, "")
+
+	// auto parse
+	// 将查询的词语参数分离，让参数的使用更灵活
+	queryList := make([]string, 0)
+	argList := []string{os.Args[0]}
+
+	lastArg := ""
+	for _, arg := range os.Args[1:] {
+
+		if strings.Index(arg, "-") == 0 {
+			argList = append(argList, arg)
+			lastArg = arg
+			continue
+		}
+
+		switch lastArg {
+		case "-e":
+			argList = append(argList, arg)
+			lastArg = arg
+			continue
+		}
+
+		queryList = append(queryList, arg)
+		lastArg = arg
+	}
+
+	os.Args = argList
 	flag.Parse()
 
 	// 检查
-	if flag.NArg() < 1 {
+	if len(queryList) < 1 {
 		fmt.Println("未输入参数")
 		flag.Usage()
 		return
@@ -51,20 +78,25 @@ func main() {
 
 	// 目前认为多个连续的单词为单一句子，使用空格组合后查询
 	// TODO: 增加参数，使程序把单词分开单独查询
-	query := strings.Join(flag.Args(), " ")
+	query := strings.Join(queryList, " ")
 
-	switch *eng {
+	result := ""
+	switch strings.TrimSpace(strings.ToLower(*eng)) {
+	case "bing":
+		// engine power by 'bing'
+		result = engien.NewBing(query, style).Query()
+	case "youdao":
+		fallthrough
 	default:
 		// default is 'youdao'
-		// TODO: More engines
-		engien.NewYoudao(query, style).Query()
+		result = engien.NewYoudao(query, style).Query()
 	}
 
+	fmt.Println(result)
 	if (*say || *shortSay) && runtime.GOOS == "darwin" {
 		sayPath, err := exec.LookPath("say")
 		if err != nil {
 			log.Println(err)
-			os.Exit(1)
 		}
 
 		cmd := exec.Command(sayPath, query)

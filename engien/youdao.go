@@ -115,7 +115,7 @@ func (yd Youdao) getUrlNewVer() string {
 }
 
 // 查询
-func (yd Youdao) Query() {
+func (yd Youdao) Query() string {
 	urlStr := yd.getUrlOldVer()
 	resp, err := http.Get(urlStr)
 
@@ -128,7 +128,7 @@ func (yd Youdao) Query() {
 	rs := new(YoudaoResult)
 	json.Unmarshal(result, rs)
 	rs.style = yd.style
-	rs.Format()
+	return rs.Format()
 }
 
 // 结果集结构体
@@ -154,70 +154,70 @@ type web struct {
 }
 
 // main format
-func (yr *YoudaoResult) Format() {
-	context := fmt.Sprintf("\n%s %s\n\n",
+func (yr *YoudaoResult) Format() string {
+	content := fmt.Sprintf("\n%s %s\n\n",
 		common.ColorIt("查询:", common.Title, yr.style),
 		common.ColorIt(yr.Query, common.Normal))
 
 	// phonetic
 	if pho := yr.phoneticFormat(); strings.TrimSpace(pho) != "" {
-		context += fmt.Sprintf("%s\n\n", pho)
+		content += fmt.Sprintf("%s\n\n", pho)
 	}
 
 	// explains
 	if exp := yr.explainsFormat(); strings.TrimSpace(exp) != "" {
-		context += fmt.Sprintf("%s\n\n%s\n", common.ColorIt("Exps:", common.Title, yr.style), exp)
+		content += fmt.Sprintf("%s\n\n%s\n", common.ColorIt("Exps:", common.Title, yr.style), exp)
 	}
 
 	// translation
 	if tran := yr.transFormat(); strings.TrimSpace(tran) != "" {
-		context += fmt.Sprintf("%s\n\n%s\n\n", common.ColorIt("翻译:", common.Title, yr.style), tran)
+		content += fmt.Sprintf("%s\n\n%s\n\n", common.ColorIt("翻译:", common.Title, yr.style), tran)
 	}
 
 	// web
 	if web := yr.webFormat(); strings.TrimSpace(web) != "" {
-		context += fmt.Sprintf("%s\n\n%s\n\n", common.ColorIt("网络释义:", common.Title, yr.style), web)
+		content += fmt.Sprintf("%s\n\n%s\n\n", common.ColorIt("网络释义:", common.Title, yr.style), web)
 	}
 
-	fmt.Println(context)
+	return content
 }
 
 // format explain
 func (yr *YoudaoResult) explainsFormat() string {
-	content := ""
+	context := ""
 	number := 1
 	for _, exp := range yr.Basic.Explains {
 		exp := strings.Split(exp, ". ")
 		if yr.Basic.UkPhonetic == "" && yr.Basic.UsPhonetic == "" {
 			numStr := fmt.Sprintf("% 2d", number)
-			content += common.ColorIt(numStr, common.Alert, yr.style) + "." + strings.Join(exp, ".\t") + "\n\n"
+			context += common.ColorIt(numStr, common.Alert, yr.style) + "." + strings.Join(exp, ".\t") + "\n\n"
 		} else {
 			for i, v := range exp {
 				if (i+1)%2 == 0 {
-					content += v + "\n"
+					context += v + "\n"
 				} else {
-					content += fmt.Sprintf("%5s.  ", v)
+					context += fmt.Sprintf("%5s.  ", v)
 				}
 			}
 		}
 		number++
 	}
-	return content
+	return context
 }
 
 // format phonetic
 func (yr *YoudaoResult) phoneticFormat() string {
-	content := ""
+	context := ""
 	if yr.Basic.UkPhonetic == "" && yr.Basic.UsPhonetic == "" && yr.Basic.Phonetic != "" {
-		content += common.ColorIt("拼音: ", common.Title, yr.style) + yr.Basic.Phonetic
+		context += common.ColorIt("拼音: ", common.Title, yr.style) + yr.Basic.Phonetic
 	} else if yr.Basic.UkPhonetic != "" || yr.Basic.UsPhonetic != "" {
-		content += common.ColorIt("英: ", common.Title, yr.style) +
+		context += common.ColorIt("英: ", common.Title, yr.style) +
 			common.ColorIt(yr.Basic.UkPhonetic, common.Alert, yr.style) +
 			strings.Repeat(" ", 4)
-		content += common.ColorIt("美: ", common.Title, yr.style) +
+		context += common.ColorIt("美: ", common.Title, yr.style) +
 			common.ColorIt(yr.Basic.UsPhonetic, common.Alert, yr.style)
 	}
-	return content
+	return context
 }
 
 // format translation
@@ -230,16 +230,16 @@ func (yr *YoudaoResult) transFormat() string {
 
 // format web
 func (yr *YoudaoResult) webFormat() string {
-	content := ""
+	context := ""
 	number := 1
 	for _, v := range yr.Web {
 		numStr := fmt.Sprintf("% 2d", number)
-		content += fmt.Sprintf("  %s.%s:\n    %s\n\n",
+		context += fmt.Sprintf("  %s.%s:\n    %s\n\n",
 			common.ColorIt(numStr, common.Alert, yr.style),
 			common.ColorIt(v.Key, common.Alert, yr.style),
 			strings.Join(v.Value, ", "))
 		number++
 	}
 
-	return content
+	return context
 }

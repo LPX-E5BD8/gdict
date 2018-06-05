@@ -1,5 +1,5 @@
 package engien
 
 type Engine interface {
-	Query()
+	Query() string
 }

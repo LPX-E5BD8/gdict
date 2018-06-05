@@ -49,11 +49,11 @@ func ColorIt(content string, position int, style ...string) string {
 
 func color(content, style string, rgbIndex int) string {
 	switch style {
-	case "dark":
-		return rgbterm.FgString(content, Dark[rgbIndex].R, Dark[rgbIndex].G, Dark[rgbIndex].B)
 	case "light":
 		return rgbterm.FgString(content, Light[rgbIndex].R, Light[rgbIndex].G, Light[rgbIndex].B)
+	case "dark":
+		fallthrough
 	default:
-		return content
+		return rgbterm.FgString(content, Dark[rgbIndex].R, Dark[rgbIndex].G, Dark[rgbIndex].B)
 	}
 }
