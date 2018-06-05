@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -25,7 +25,7 @@ func main() {
 	help := flag.Bool("help", false, "输出帮助信息")
 	shortHelp := flag.Bool("h", false, "")
 	flag.Parse()
-	
+
 	// 检查
 	if flag.NArg() < 1 {
 		fmt.Println("未输入参数")
@@ -48,7 +48,7 @@ func main() {
 	} else if *dark {
 		style = "dark"
 	}
-	
+
 	// 目前认为多个连续的单词为单一句子，使用空格组合后查询
 	// TODO: 增加参数，使程序把单词分开单独查询
 	query := strings.Join(flag.Args(), " ")
