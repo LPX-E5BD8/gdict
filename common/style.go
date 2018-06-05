@@ -1,6 +1,8 @@
 package common
 
-import "github.com/aybabtme/rgbterm"
+import (
+	"github.com/aybabtme/rgbterm"
+)
 
 type Color struct {
 	R uint8
@@ -8,10 +10,16 @@ type Color struct {
 	B uint8
 }
 
+const (
+	Title = iota
+	Normal
+	Alert
+)
+
 var Light = []Color{
-	{23, 50, 7},
-	{119, 52, 96},
-	{78, 29, 76},
+	{30, 144, 255},
+	{89, 90, 78},
+	{64, 56, 54},
 }
 
 var Dark = []Color{
@@ -20,31 +28,23 @@ var Dark = []Color{
 	{226, 211, 172},
 }
 
-func ColorTitle(content string, style ...string) string {
+func ColorIt(content string, position int, style ...string) string {
 	s := "dark"
-	if len(style) > 0 {
+	if len(style) >= 1 {
 		s = style[0]
 	}
 
-	return color(content, s, 0)
-}
-
-func ColorNormal(content string, style ...string) string {
-	s := "dark"
-	if len(style) > 0 {
-		s = style[0]
+	colorIdx := Normal
+	switch position {
+	case Title:
+		colorIdx = Title
+	case Normal:
+		colorIdx = Normal
+	case Alert:
+		colorIdx = Alert
 	}
 
-	return color(content, s, 1)
-}
-
-func ColorAlert(content string, style ...string) string {
-	s := "dark"
-	if len(style) > 0 {
-		s = style[0]
-	}
-
-	return color(content, s, 2)
+	return color(content, s, colorIdx)
 }
 
 func color(content, style string, rgbIndex int) string {
