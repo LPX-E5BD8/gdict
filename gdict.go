@@ -76,8 +76,6 @@ func main() {
 		style = "dark"
 	}
 
-	// 目前认为多个连续的单词为单一句子，使用空格组合后查询
-	// TODO: 增加参数，使程序把单词分开单独查询
 	query := strings.Join(queryList, " ")
 
 	result := ""
