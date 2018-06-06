@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/liipx/gdict/engien"
+	"github.com/liipx/gdict/engine"
 )
 
 func main() {
@@ -82,14 +82,19 @@ func main() {
 
 	result := ""
 	switch strings.TrimSpace(strings.ToLower(*eng)) {
+	case "iciba":
+		// engine power by 'iciba'
+		result = engine.NewIciba(query, style).Query()
+
 	case "bing":
 		// engine power by 'bing'
-		result = engien.NewBing(query, style).Query()
+		result = engine.NewBing(query, style).Query()
+
 	case "youdao":
 		fallthrough
 	default:
 		// default is 'youdao'
-		result = engien.NewYoudao(query, style).Query()
+		result = engine.NewYoudao(query, style).Query()
 	}
 
 	fmt.Println(result)

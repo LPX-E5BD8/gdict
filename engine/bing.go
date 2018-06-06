@@ -1,4 +1,4 @@
-package engien
+package engine
 
 import (
 	"encoding/json"
@@ -57,7 +57,7 @@ func (b *Bing) getResult() *Bing {
 	if err != nil {
 		errInfo := fmt.Sprintf("%s :%s", "网络连接异常，请检查网络状态",
 			strings.Join(strings.Split(err.Error(), ":")[2:], ":"))
-		panic(errInfo)
+		fmt.Println(common.ColorIt(errInfo, common.Alert, b.style))
 	}
 
 	result, _ := ioutil.ReadAll(resp.Body)
