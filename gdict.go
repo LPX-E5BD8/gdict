@@ -95,6 +95,7 @@ func main() {
 		result = engine.NewYoudao(query, style).Query()
 	}
 
+	// 输出结果
 	fmt.Println(result)
 	if (*say || *shortSay) && runtime.GOOS == "darwin" {
 		sayPath, err := exec.LookPath("say")
