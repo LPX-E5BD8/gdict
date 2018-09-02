@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"os"
 
 	"github.com/liipx/gdict/common"
 )
@@ -68,6 +69,33 @@ func (b *Bing) getResult() *Bing {
 	b.result = rs
 
 	return b
+}
+
+// WorkflowOutput got the output fmt for alfred.
+func (b *Bing) WFOutput() string {
+	br := b.result
+	result := &EngAlfResult{
+		Items: make([]*WFItem, 0),
+	}
+
+	// generate workflow item
+	for _, t := range br.Defs {
+		result.Items = append(result.Items, &WFItem{
+			Valid:    true,
+			Title:    t.Def,
+			Subtitle: t.Pos,
+			Arg:      t.Def,
+		})
+	}
+
+	resultByte, err := json.Marshal(result)
+	if err != nil {
+		os.Exit(1)
+	}
+
+	return string(resultByte)
+
+	return ""
 }
 
 func (b *Bing) Query() string {

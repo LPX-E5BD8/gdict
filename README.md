@@ -50,3 +50,30 @@ Options:
 ### 其他说明
 1. 有道云、爱词霸API所使用Key皆来自github，侵删。
 2. MacOS支持鬼魅朗读，可以感受一下: `gdict xxx -s` ... 其实就是调用的say
+3. 支持Alfred workflow 格式的输出，可以按照下面的步骤定制自己的workflow
+
+```text
+# 1. 打开 workflow
+# 2. 添加 script filter
+# 3. 填写 `Keyword` 等基本信息
+# 4. language选择/bin/bash，内容从下文`query=$1`到最后
+# 5. 输出追加一个`copy to clipboard`即可
+
+# 脚本内粘贴以下内容
+    
+query=$1
+# 将下面的信息修改为 gdict binary 的存放路径
+BINPATH="/like/your/gopath/bin"
+     
+# 参数一定要指定-w，输出特定格式的值
+# 按照以下配置进行引擎切换
+# $BINPATH/gdict -w -e bing $query
+# $BINPATH/gdict -w -e iciba $query
+     
+$BINPATH/gdict -w -e youdao $query`
+```
+
+#### 效果图
+![](https://user-images.githubusercontent.com/39460745/44953434-f790ff80-aec7-11e8-82cf-271f5dbeccd1.png)
+
+![](https://user-images.githubusercontent.com/39460745/44953473-48085d00-aec8-11e8-813e-f9fe3ea32558.png)

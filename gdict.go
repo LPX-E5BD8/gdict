@@ -20,10 +20,13 @@ func main() {
 	dark := flag.Bool("dark", true, "配色方案 dark")
 	light := flag.Bool("light", false, "配色方案 light")
 	// engine
-	eng := flag.String("e", "youdao", "指定字典引擎")
+	engStr := flag.String("e", "youdao", "指定字典引擎")
 	// --help and -h
 	help := flag.Bool("help", false, "输出帮助信息")
 	shortHelp := flag.Bool("h", false, "")
+
+	// alfred 输出格式
+	workflow := flag.Bool("w", false, "是否使用Alfred输出模式")
 
 	// auto parse
 	// 将查询的词语参数分离，让参数的使用更灵活
@@ -78,25 +81,32 @@ func main() {
 
 	query := strings.Join(queryList, " ")
 
-	result := ""
-	switch strings.TrimSpace(strings.ToLower(*eng)) {
+	// create engine
+	var eng engine.Engine
+	switch strings.TrimSpace(strings.ToLower(*engStr)) {
 	case "iciba":
 		// engine power by 'iciba'
-		result = engine.NewIciba(query, style).Query()
-
+		eng = engine.NewIciba(query, style)
 	case "bing":
 		// engine power by 'bing'
-		result = engine.NewBing(query, style).Query()
-
+		eng = engine.NewBing(query, style)
 	case "youdao":
 		fallthrough
 	default:
 		// default is 'youdao'
-		result = engine.NewYoudao(query, style).Query()
+		eng = engine.NewYoudao(query, style)
 	}
 
-	// 输出结果
+	// 输出
+	var result string
+	if *workflow {
+		result = eng.WFOutput()
+	} else {
+		result = eng.Query()
+	}
 	fmt.Println(result)
+
+	// 发声
 	if (*say || *shortSay) && runtime.GOOS == "darwin" {
 		sayPath, err := exec.LookPath("say")
 		if err != nil {

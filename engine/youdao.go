@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/liipx/gdict/common"
+	"os"
 )
 
 const ydAPIOld = "http://fanyi.youdao.com/openapi.do"
@@ -96,7 +97,7 @@ func NewYoudao(query string, style string) *Youdao {
 }
 
 // 获取老版本API的RUL
-func (yd Youdao) getUrlOldVer() string {
+func (yd *Youdao) getUrlOldVer() string {
 	values := &url.Values{}
 	values.Set("keyfrom", yd.KeyFrom)
 	values.Set("key", yd.Key)
@@ -109,26 +110,65 @@ func (yd Youdao) getUrlOldVer() string {
 }
 
 // 获取新版本API的RUL
-func (yd Youdao) getUrlNewVer() string {
+func (yd *Youdao) getUrlNewVer() string {
 	return fmt.Sprintf("%s?keyfrom=%s&key=%s&type=data&doctype=json&version=1.1&q=%s",
 		ydAPIOld, yd.KeyFrom, yd.Key, yd.query)
 }
 
-// 查询
-func (yd Youdao) Query() string {
+// 获取新版本API的RUL
+func (yd *Youdao) getResult() *YoudaoResult {
 	urlStr := yd.getUrlOldVer()
 	resp, err := http.Get(urlStr)
 
 	if err != nil {
 		log.Println(err)
+		os.Exit(1)
 	}
 	defer resp.Body.Close()
 
-	result, _ := ioutil.ReadAll(resp.Body)
-	rs := new(YoudaoResult)
+	result, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	rs := &YoudaoResult{}
 	json.Unmarshal(result, rs)
 	rs.style = yd.style
-	return rs.Format()
+
+	return rs
+}
+
+// WorkflowOutput got the output fmt for alfred.
+func (yd *Youdao) WFOutput() string {
+	yr := yd.getResult()
+	result := &EngAlfResult{
+		Items: make([]*WFItem, 0),
+	}
+
+	// generate workflow item
+	for _, t := range yr.Web {
+		for _, v := range t.Value {
+			result.Items = append(result.Items, &WFItem{
+				Valid:    true,
+				Title:    v,
+				Subtitle: t.Key,
+				Arg:      v,
+			})
+		}
+	}
+
+	resultByte, err := json.Marshal(result)
+	if err != nil {
+		os.Exit(1)
+	}
+
+	return string(resultByte)
+}
+
+// 查询
+func (yd *Youdao) Query() string {
+	return yd.getResult().Format()
 }
 
 // 结果集结构体

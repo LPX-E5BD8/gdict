@@ -1,10 +1,12 @@
 package engine
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/liipx/gdict/common"
@@ -63,6 +65,33 @@ func (i *Iciba) getResult() *IcibaResult {
 	xml.Unmarshal(result, rs)
 
 	return rs
+}
+
+// WorkflowOutput got the output fmt for alfred.
+func (i *Iciba) WFOutput() string {
+	ir := i.result
+	result := &EngAlfResult{
+		Items: make([]*WFItem, 0),
+	}
+
+	// generate workflow item
+	for _, t := range ir.Sent {
+		result.Items = append(result.Items, &WFItem{
+			Valid:    true,
+			Title:    strings.TrimSpace(t.Trans),
+			Subtitle: strings.TrimSpace(t.Orig),
+			Arg:      strings.TrimSpace(t.Trans),
+		})
+	}
+
+	resultByte, err := json.Marshal(result)
+	if err != nil {
+		os.Exit(1)
+	}
+
+	return string(resultByte)
+
+	return ""
 }
 
 func (i *Iciba) Query() string {
