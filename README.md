@@ -51,6 +51,7 @@ Options:
 1. 有道云、爱词霸API所使用Key皆来自github，侵删。
 2. MacOS支持鬼魅朗读，可以感受一下: `gdict xxx -s` ... 其实就是调用的say
 3. 支持Alfred workflow 格式的输出，可以按照下面的步骤定制自己的workflow
+4. 或者直接使用alfred目录下我导出的文件进行安装，安装后记得修改路径
 
 ```text
 # 1. 打开 workflow
