@@ -158,6 +158,16 @@ func (yd *Youdao) WFOutput() string {
 		}
 	}
 
+	// add translations
+	for _, tr := range yr.Translation {
+		result.Items = append(result.Items, &WFItem{
+			Valid:    true,
+			Title:    tr,
+			Subtitle: tr,
+			Arg:      tr,
+		})
+	}
+
 	resultByte, err := json.Marshal(result)
 	if err != nil {
 		os.Exit(1)

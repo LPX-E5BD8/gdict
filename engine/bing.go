@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"os"
+	"strings"
 
 	"github.com/liipx/gdict/common"
 )
